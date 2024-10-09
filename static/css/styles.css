@@ -1,179 +1,170 @@
-/* General Reset */
-* {
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    background: linear-gradient(to right, #3498db, #ecf0f1);
+    color: #2c3e50;
 }
 
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
+h1, h2, h3 {
+    color: #2980b9;
 }
 
-/* Header */
-header {
+.navbar {
     background-color: #2c3e50;
+    padding: 10px;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navbar li {
+    margin: 0 15px;
+}
+
+.navbar a {
     color: #ecf0f1;
-    padding: 15px 20px;
-    text-align: center;
-    border-bottom: 5px solid #3498db;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 2rem;
+.navbar a:hover {
+    text-decoration: underline;
 }
 
-/* General layout */
+/* Container */
 .container {
-    width: 85%;
-    margin: 20px auto;
     padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Login and Register Forms */
+.login-container, .register-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in;
+}
+
+.login-container h1, .register-container h1 {
+    margin-bottom: 20px;
+}
+
+/* Form Elements */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input, form select, form textarea {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #3498db;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+}
+
+form input:focus, form select:focus, form textarea:focus {
+    border: 2px solid #2980b9;
 }
 
 /* Buttons */
 button {
+    padding: 10px;
     background-color: #3498db;
-    color: #fff;
-    padding: 10px 20px;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s ease;
 }
 
 button:hover {
     background-color: #2980b9;
 }
 
-button:disabled {
-    background-color: #95a5a6;
-    cursor: not-allowed;
-}
-
-/* Forms */
-input[type="text"], input[type="email"], input[type="password"], input[type="file"], select {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0 16px;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-/* Profile section */
-.profile {
-    margin-bottom: 20px;
-}
-
-.profile h2 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #34495e;
-}
-
-.profile p {
-    font-size: 1rem;
-    margin: 5px 0;
-    color: #7f8c8d;
-}
-
-/* List of courses and students */
-ul {
+/* Flash Messages */
+.flashes {
     list-style-type: none;
-    padding: 0;
+    margin: 15px 0;
 }
 
-ul li {
-    background-color: #ecf0f1;
-    padding: 10px 15px;
-    margin: 10px 0;
-    border-radius: 4px;
-    border: 1px solid #bdc3c7;
-    color: #2c3e50;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+.flash-success {
+    color: green;
 }
 
-ul li a {
-    text-decoration: none;
-    color: #2980b9;
+.flash-error {
+    color: red;
 }
 
-ul li:hover {
-    background-color: #3498db;
-    color: white;
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-ul li a:hover {
-    text-decoration: underline;
-    color: white;
+.form-animation {
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeIn 0.5s forwards;
 }
 
-/* Scrollable student list */
+/* Profile Section */
+.profile {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Student List */
 .student-list {
     max-height: 200px;
     overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 10px;
-    background-color: #f9f9f9;
 }
 
-/* Footer */
-footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+.student-list ul {
+    list-style-type: none;
 }
 
-/* Aesthetic Colors for Forms */
-input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
-    outline: none;
-    border-color: #3498db;
+.student-list li {
+    padding: 10px;
+    border-bottom: 1px solid #3498db;
+}
+
+.student-list li:hover {
     background-color: #ecf0f1;
 }
 
-/* Profile Picture Upload Styling */
-input[type="file"] {
-    background-color: #f0f2f5;
-    border: 1px solid #bdc3c7;
-    padding: 10px;
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .navbar li {
+        margin: 10px 0;
+    }
 }
 
-/* Navigation Bar */
-.navbar {
-    width: 100%;
-    padding: 10px 0;
-    background-color: #2c3e50;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px solid #3498db;
-}
-
-.navbar a {
-    text-decoration: none;
-    color: #ecf0f1;
-    padding: 10px 20px;
-    font-size: 1.1rem;
-}
-
-.navbar a:hover {
-    background-color: #2980b9;
-    color: white;
-    border-radius: 4px;
-}
 
  

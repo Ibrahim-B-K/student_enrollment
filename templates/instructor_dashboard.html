@@ -8,14 +8,14 @@
 </head>
 <body>
     <header>
-        <h1>Welcome, Instructor {{ instructor[0] }} {{ instructor[1] }}</h1>
+        <h1>Welcome, Instructor {{ instructor[1] }} {{ instructor[2] }}</h1>
     </header>
 
     <div class="profile">
         <h2>Profile Details</h2>
-        <p><strong>Instructor ID:</strong> {{ instructor[2] }}</p>
-        <p><strong>Phone:</strong> {{ instructor[3] }}</p>
-        <p><strong>Email:</strong> {{ instructor[4] }}</p>
+        <p><strong>Instructor ID:</strong> {{ instructor[0] }}</p>
+        <p><strong>Phone:</strong> {{ instructor[4] }}</p>
+        <p><strong>Email:</strong> {{ instructor[3] }}</p>
 
         <h2>Course(s) You Teach</h2>
         <ul>
@@ -42,4 +42,5 @@
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>
+
 

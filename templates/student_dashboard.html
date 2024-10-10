@@ -8,16 +8,16 @@
 </head>
 <body>
     <header>
-        <h1>Welcome, {{ student.first_name }} {{ student.last_name }}</h1>
+        <h1>Welcome, {{ student[1] }} {{ student[2] }}</h1>
     </header>
 
     <div class="profile">
         <h2>Profile Details</h2>
-        <p><strong>Student ID:</strong> {{ student.student_id }}</p>
+        <p><strong>Student ID:</strong> {{ student[0] }}</p>
         <p><strong>Age:</strong> {{ student.age }}</p>
-        <p><strong>Date of Birth:</strong> {{ student.date_of_birth }}</p>
-        <p><strong>Phone:</strong> {{ student.phone_number }}</p>
-        <p><strong>Email:</strong> {{ student.email }}</p>
+        <p><strong>Date of Birth:</strong> {{ student[3] }}</p>
+        <p><strong>Phone:</strong> {{ student[5] }}</p>
+        <p><strong>Email:</strong> {{ student[4] }}</p>
 
         <h2>Courses Enrolled</h2>
         <ul>
@@ -27,7 +27,7 @@
         </ul>
 
         <h2>Department</h2>
-        <p>{{ student.department_name }}</p>
+        <p>{{ student[8] }}</p>
 
         <h2>Profile Picture</h2>
         <form action="/upload_profile_pic" method="post" enctype="multipart/form-data">
@@ -38,4 +38,5 @@
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>
+
 

@@ -8,6 +8,18 @@
 </head>
 <body>
     <h1>Student Registration</h1>
+
+    <!-- Flash message display -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
     <form action="/register" method="POST" class="form-animation">
         <label for="first_name">First Name:</label>
         <input type="text" id="first_name" name="first_name" required>
@@ -39,8 +51,10 @@
 
         <button type="submit">Register</button>
     </form>
+    
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>
+
 
 

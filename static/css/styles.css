@@ -99,15 +99,26 @@ button:hover {
 .flashes {
     list-style-type: none;
     margin: 15px 0;
+    padding: 0;
+}
+
+.flash-success, .flash-error {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 .flash-success {
-    color: green;
+    color: white;
+    background-color: green;
 }
 
 .flash-error {
-    color: red;
+    color: white;
+    background-color: red;
 }
+
 
 /* Animations */
 @keyframes fadeIn {

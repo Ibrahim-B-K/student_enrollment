@@ -1,0 +1,181 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #3498db, #ecf0f1);
+    color: #2c3e50;
+}
+
+h1, h2, h3 {
+    color: #2980b9;
+}
+
+.navbar {
+    background-color: #2c3e50;
+    padding: 10px;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navbar li {
+    margin: 0 15px;
+}
+
+.navbar a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
+
+/* Container */
+.container {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Login and Register Forms */
+.login-container, .register-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in;
+}
+
+.login-container h1, .register-container h1 {
+    margin-bottom: 20px;
+}
+
+/* Form Elements */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input, form select, form textarea {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #3498db;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+}
+
+form input:focus, form select:focus, form textarea:focus {
+    border: 2px solid #2980b9;
+}
+
+/* Buttons */
+button {
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Flash Messages */
+.flashes {
+    list-style-type: none;
+    margin: 15px 0;
+    padding: 0;
+}
+
+.flash-success, .flash-error {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.flash-success {
+    color: white;
+    background-color: green;
+}
+
+.flash-error {
+    color: white;
+    background-color: red;
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.form-animation {
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeIn 0.5s forwards;
+}
+
+/* Profile Section */
+.profile {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Student List */
+.student-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.student-list ul {
+    list-style-type: none;
+}
+
+.student-list li {
+    padding: 10px;
+    border-bottom: 1px solid #3498db;
+}
+
+.student-list li:hover {
+    background-color: #ecf0f1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .navbar li {
+        margin: 10px 0;
+    }
+}
+
+
+ 

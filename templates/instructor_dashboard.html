@@ -6,10 +6,19 @@
     <title>Instructor Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body>
+<body class="instructor_dash">
     <header>
-        <h1>Welcome, Instructor {{ instructor[1] }} {{ instructor[2] }}</h1>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="static/images/logo.jpg" alt="College Enrollment Logo">
+            </div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/login">Logout</a></li>
+            </ul>
+        </nav>
     </header>
+    <h1>Welcome, Instructor {{ instructor[1] }} {{ instructor[2] }}</h1>
 
     <div class="profile">
         <h2>Profile Details</h2>
@@ -33,11 +42,7 @@
             </ul>
         </div>
 
-        <h2>Profile Picture</h2>
-        <form action="/upload_profile_pic" method="post" enctype="multipart/form-data">
-            <input type="file" name="profile_pic">
-            <button type="submit">Upload</button>
-        </form>
+        
     </div>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>

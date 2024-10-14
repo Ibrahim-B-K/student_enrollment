@@ -149,7 +149,7 @@ def register():
 
             # Insert into the Enrollments table
             cur.execute("INSERT INTO enrollments(student_id, course_id, enrollment_date) "
-                        "VALUES ((SELECT student_id FROM students WHERE username=%s), %s)",
+                        "VALUES ((SELECT student_id FROM students WHERE username=%s), %s, %s)",
                         (username, course_id, current_date))
             mysql.connection.commit()
         except Exception as e:

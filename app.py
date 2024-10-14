@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_mysqldb import MySQL
 from Crypto.Hash import SHA256  # Import SHA256 from pycryptodome
 import smtplib  # Import smtplib for email
@@ -6,6 +6,8 @@ from email.mime.text import MIMEText  # For creating the email text body
 import random
 import string
 import hashlib
+from datetime import datetime
+
 
 
 
@@ -55,6 +57,18 @@ def send_email(to_email, username, password):
 # Registration route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    
+    cur = mysql.connection.cursor()
+    
+    # Fetch available departments to display in the dropdown
+    cur.execute("SELECT department_id, department_name FROM departments")
+    departments = cur.fetchall()
+    print(departments)  # Debug: Check if departments are fetched
+
+    # Initialize courses and selected department
+    courses = []
+    department_id = None
+
     if request.method == 'POST':
         details = request.form
         first_name = details['first_name']
@@ -63,58 +77,132 @@ def register():
         email = details['email']
         phone = details['phone']
         address = details['address']
-        exam_marks = details['exam_marks']
+        exam_marks = details['exam_marks'].strip()  # Get marks as a string
+
+        if not exam_marks:  # Check if exam marks are provided
+            flash("Entrance exam marks are required.", "danger")
+            return redirect(url_for('register'))
+
+        try:
+            exam_marks = int(exam_marks)  # Convert marks to integer
+        except ValueError:
+            flash("Invalid marks. Please enter a valid number.", "danger")
+            return redirect(url_for('register'))
+
         department_id = details['department']
+        course_id = details.get('course')  # Get selected course
+        
+        # Fetch the department's minimum marks requirement
+        cur.execute("SELECT required_mark FROM departments WHERE department_id=%s", (department_id,))
+        min_marks = cur.fetchone()
+        
+        if not min_marks:
+            flash("Invalid department selected.", "danger")
+            return redirect(url_for('register'))
+        
+        min_marks = min_marks[0]
+
+        # Validate entrance exam marks against department's requirement
+        if exam_marks < min_marks:
+            flash("Your marks do not meet the department's requirements.", "danger")
+            return redirect(url_for('register'))
+
+        # Check if a course is selected
+        if not course_id:
+            flash("Please select a course.", "danger")
+            return redirect(url_for('register'))
+
+        # Check if the selected course has available seats
+        cur.execute("SELECT capacity, (SELECT COUNT(*) FROM enrollments WHERE course_id=%s) AS enrolled_count FROM courses WHERE course_id=%s", (course_id, course_id))
+        course_data = cur.fetchone()
+
+        if course_data is None:
+            flash("Selected course does not exist.", "danger")
+            return redirect(url_for('register'))
+
+        capacity = course_data[0]
+        enrolled_count = course_data[1]
+
+        if enrolled_count >= capacity:
+            flash("The selected course is full. Please choose another course.", "danger")
+            return redirect(url_for('register'))
 
         # Generate username and password
         username, password = generate_credentials()
         print(f"Generated Password: {password}")  # Debugging statement
 
-        # Hash the password using SHA256
+        # Hash the password using MD5
         hashed_password = hashlib.md5(password.encode('utf-8')).hexdigest()
         print(f"Hashed Password: {hashed_password}")  # Print the hashed password
 
-
         # Insert into the Students table with the generated credentials
-        cur = mysql.connection.cursor()
         try:
-            
-            try:
-                cur.execute(
+            cur.execute(
                 "INSERT INTO students(first_name, last_name, date_of_birth, email, phone_number, address, entrance_exam_marks, department_id, username, password) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 (first_name, last_name, dob, email, phone, address, exam_marks, department_id, username, hashed_password)
-                )
-                mysql.connection.commit()
-            except Exception as e:
-                mysql.connection.rollback()  # Rollback on error
-                print(f"Error during insertion: {e}")  # Print the error for debugging
+            )
+            mysql.connection.commit()
 
+            # Get the current date
+            current_date = datetime.now().strftime('%Y-%m-%d')
 
-            # Attempt to send email with credentials
-            if send_email(email, username, password):
-                flash("Registration successful! Your credentials have been sent to your email.", "success")
-            else:
-                flash("Registration successful, but failed to send email. Please contact support.", "warning")
-
-            cur.execute("SELECT password FROM students WHERE username=%s", (username,))
-            stored_hashed_password = cur.fetchone()[0]
-            print(f"Stored Hashed Password: {stored_hashed_password}")  # Check what is stored
-
-            # Additional debug to compare hashes
-            if hashed_password == stored_hashed_password:
-                print("Hashes match!")
-            else:
-                print("Hashes do not match!")
-
-            return redirect(url_for('login'))
+            # Insert into the Enrollments table
+            cur.execute("INSERT INTO enrollments(student_id, course_id, enrollment_date) "
+                        "VALUES ((SELECT student_id FROM students WHERE username=%s), %s)",
+                        (username, course_id, current_date))
+            mysql.connection.commit()
         except Exception as e:
-            mysql.connection.rollback()
+            mysql.connection.rollback()  # Rollback on error
+            print(f"Error during insertion: {e}")  # Print the error for debugging
             flash("An error occurred during registration: {}".format(str(e)), "danger")
-        finally:
-            cur.close()
+            return redirect(url_for('register'))
 
-    return render_template('register.html')
+        # Attempt to send email with credentials
+        if send_email(email, username, password):
+            flash("Registration successful! Your credentials have been sent to your email.", "success")
+        else:
+            flash("Registration successful, but failed to send email. Please contact support.", "warning")
+
+        return redirect(url_for('login'))
+
+    # Fetch courses based on selected department during GET request
+    if request.method == 'GET':
+        department_id = request.args.get('department')
+        if department_id:
+            cur.execute(
+                "SELECT c.course_id, c.course_name FROM courses c "
+                "JOIN course_department cd ON c.course_id = cd.course_id "
+                "WHERE cd.department_id = %s", (department_id,)
+            )
+            courses = cur.fetchall()
+
+    cur.close()
+
+    return render_template('register.html', departments=departments, courses=courses, department_id=department_id)
+
+
+@app.route('/get_courses', methods=['GET'])
+def get_courses():
+    department_id = request.args.get('department_id')
+    
+    cur = mysql.connection.cursor()
+    cur.execute(
+                "SELECT c.course_id, c.course_name FROM courses c "
+                "JOIN course_department cd ON c.course_id = cd.course_id "
+                "WHERE cd.department_id = %s", (department_id,)
+            )
+    courses = cur.fetchall()
+    cur.close()
+
+    # Convert the list of tuples to a list of dictionaries for JSON serialization
+    course_list = [{'course_id': course[0], 'course_name': course[1]} for course in courses]
+    
+    return jsonify(course_list)
+
+
+
+
 
 # Login route
 @app.route('/login', methods=['GET', 'POST'])
@@ -140,13 +228,14 @@ def login():
             if user_type == 'student' and user:
                 # Hash the entered password using MD5
                 entered_hashed_password = hashlib.md5(password.encode('utf-8')).hexdigest()
+                # Compare the MD5 hashed password
+                if entered_hashed_password == user[1]:  # Assuming user[1] contains the hashed password
+                    session['logged_in'] = True
+                    session['username'] = username
+                    session['user_type'] = user_type
+                    return redirect(url_for('student_dashboard'))
 
-            # Compare the MD5 hashed password
-            if entered_hashed_password == user[1]:  # Assuming user[1] contains the hashed password
-                session['logged_in'] = True
-                session['username'] = username
-                session['user_type'] = user_type
-                return redirect(url_for('student_dashboard'))
+            
             elif user_type == 'instructor' and user and user[1] == SHA256.new(password.encode('utf-8')).hexdigest():
                 session['logged_in'] = True
                 session['username'] = username
@@ -177,7 +266,18 @@ def student_dashboard():
             cur.execute("SELECT * FROM students WHERE username=%s", (username,))
             student = cur.fetchone()
             if student:
-                return render_template('student_dashboard.html', student=student)
+                # Fetch courses enrolled by the student along with instructor details
+                cur.execute("""
+                    SELECT c.course_name, i.username AS instructor_name, e.grade
+                    FROM enrollments e
+                    JOIN courses c ON e.course_id = c.course_id
+                    JOIN instructors i ON c.instructor_id = i.instructor_id
+                    WHERE e.student_id = %s
+                """, (student[0],))  # Assuming student[0] is the student_id
+
+                courses = cur.fetchall()
+
+                return render_template('student_dashboard.html', student=student, courses=courses)
             else:
                 flash("Student not found.", "warning")
                 return redirect(url_for('login'))
@@ -199,7 +299,18 @@ def instructor_dashboard():
             cur.execute("SELECT * FROM Instructors WHERE username=%s", (username,))
             instructor = cur.fetchone()
             if instructor:
-                return render_template('instructor_dashboard.html', instructor=instructor)
+                # Fetch courses taught by the instructor and the students enrolled in those courses
+                cur.execute("""
+                    SELECT c.course_name, s.first_name, s.last_name, e.grade
+                    FROM courses c
+                    JOIN enrollments e ON c.course_id = e.course_id
+                    JOIN students s ON e.student_id = s.student_id
+                    WHERE c.instructor_id = %s
+                """, (instructor[0],))  # Assuming instructor[0] is the instructor_id
+
+                courses = cur.fetchall()
+
+                return render_template('instructor_dashboard.html', instructor=instructor, courses=courses)
             else:
                 flash("Instructor not found.", "warning")
                 return redirect(url_for('login'))

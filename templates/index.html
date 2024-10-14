@@ -4,21 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>College Enrollment</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
-<body>
-    <nav class="navbar">
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
-        </ul>
-    </nav>
-    <div class="container">
-        <h1>Welcome to College Enrollment System</h1>
-        <p>Explore our courses and departments.</p>
-        <img src="{{ url_for('static', filename='images/college_image.jpeg') }}" alt="College">
-    </div>
+<body class="home">
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="static/images/logo.jpg" alt="College Enrollment Logo">
+            </div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Welcome to College Enrollment System</h1>
+                <p>Explore our courses and departments.</p>
+                <a href="#" class="btn">Learn More</a>
+            </div>
+            <img src="static/images/college_image.jpg" alt="College Campus" class="hero-image">
+        </section>
+    </main>
+
+    <footer>
+        </footer>
+
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>
